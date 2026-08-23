@@ -63,3 +63,6 @@ CONCAT('R$ ', FORMAT(valor, 2, 'pt_BR')) AS valor, CONCAT('R$ ', FORMAT(valor_to
 FROM equipamentos;
 
 SELECT * FROM vw_valoresReal; /* Para vizualizar a tabela com o valor em reais */
+
+/* UPDATE */ 
+UPDATE equipamentos SET quantidade = 2 WHERE id = 19;
