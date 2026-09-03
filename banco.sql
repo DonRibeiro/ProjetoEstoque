@@ -1,5 +1,12 @@
 /*MySQL*/
 
+
+/* NOVA IDEIA DE TABELA 
+
+Tabela para contratos correlacionando os equipamentos e seus tipos. 
+
+*/
+ 
 /* show databases; USE estoque; show tables; desc equipamentos; */
 
 CREATE DATABASE IF NOT EXISTS Estoque;
@@ -50,6 +57,15 @@ SELECT nome, quantidade FROM EQUIPAMENTOS WHERE tipo ='Telefonia';
 SELECT nome, valor FROM EQUIPAMENTOS WHERE valor > 1000;
 SELECT nome, valor FROM EQUIPAMENTOS WHERE valor < 1000;
 SELECT nome, valor, quantidade FROM EQUIPAMENTOS WHERE nome LIKE 'CCR%';
+
+/* PROCEDURE */ 
+
+CREATE PROCEDURE equipamentos_acima_de_1000()
+BEGIN
+    SELECT nome, valor FROM EQUIPAMENTOS WHERE valor > 1000;
+END;    
+
+CALL equipamentos_acima_de_1000(); /* Chamando a procedure */
 
 /* Alterando a tabela */ 
 

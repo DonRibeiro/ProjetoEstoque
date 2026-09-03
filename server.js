@@ -1,23 +1,30 @@
 import express from 'express';
 import cors from 'cors';
 import pool from './db.js';
+import path from 'path'; 
+/*Importa o módulo nativo do Node.js usado para manipular e resolver caminhos de arquivos e diretórios de forma compatível com qualquer sistema operacional.*/
+import { fileURLToPath } from 'url';
 
 const app = express();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+/*Importa uma função que converte URLs de arquivos (o formato interno usado pelo import.meta.url no ES Modules) em caminhos de arquivo tradicionais do sistema*/
+
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// 1. LISTAR TODOS OS EQUIPAMENTOS (GET)
+
+// LISTAR TODOS OS EQUIPAMENTOS (GET)
 app.get('/equipamentos', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM equipamentos');
     res.json(rows);
   } catch (error) {
-    res
-    (500).json({ error: 'Erro ao buscar equipamentos: ' + error.message });
+    res.status(500).json({ error: 'Erro ao buscar equipamentos: ' + error.message });
   }
 });
 
-// 2. CADASTRAR EQUIPAMENTO (POST)
+// CADASTRAR EQUIPAMENTO (POST)
 app.post('/equipamentos', async (req, res) => {
   const { nome, valor, tipo, quantidade
 } = req.body;
@@ -29,15 +36,13 @@ app.post('/equipamentos', async (req, res) => {
  VALUES (?, ?, ?, ?)
     `;
     const [result] = await pool.query(query, [nome, valor, tipo, quantidade ]);
-    res
-    (201).json({ id: result.insertId, ...req.body });
+    res.status(201).json({ id: result.insertId, ...req.body });
   } catch (error) {
-    res
-    (500).json({ error: 'Erro  cadastrar equipamento: ' + error.message });
+    res.status(500).json({ error: 'Erro ao cadastrar equipamento: ' + error.message });
   }
 });
 
-// 3. ATUALIZAR EQUIPAMENTO (PUT)
+// ATUALIZAR EQUIPAMENTO (PUT)
 app.put('/equipamentos/:id', async (req, res) => {
   const { id } = req.params;
   const { nome, valor, tipo, quantidade
@@ -53,20 +58,18 @@ app.put('/equipamentos/:id', async (req, res) => {
         , id]);
     res.json({ message: 'Equipamento atualizado com sucesso!' });
   } catch (error) {
-    res
-    (500).json({ error: 'Erro  atualizar equipamento: ' + error.message });
+    res.status(500).json({ error: 'Erro ao atualizar equipamento: ' + error.message });
   }
 });
 
-// 4. DELETAR EQUIPAMENTO (DELETE)
+// DELETAR EQUIPAMENTO (DELETE)
 app.delete('/equipamentos/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM equipamentos WHERE id = ?', [id]);
     res.json({ message: 'Equipamento removido com sucesso!' });
   } catch (error) {
-    res
-    (500).json({ error: 'Erro ao deletar equipamento: ' + error.message });
+    res.status(500).json({ error: 'Erro ao deletar equipamento: ' + error.message });
   }
 });
 
