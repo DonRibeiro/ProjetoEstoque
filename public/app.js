@@ -1,10 +1,11 @@
 const state = { equipment: [], filter: 'Todos', search: '' };
 const $ = (selector) => document.querySelector(selector);
+const API_URL = 'http://localhost:3000';
 const money = (value) => Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 async function loadEquipment() {
   try {
-    const response = await fetch('/equipamentos');
+    const response = await fetch(`${API_URL}/equipamentos`);
     if (!response.ok) throw new Error('Não foi possivel consultar a API.');
     state.equipment = await response.json();
     render();
@@ -31,6 +32,7 @@ function openForm(item = null) { $('#equipment-form').reset(); $('#equipment-id'
 $('#search').addEventListener('input', (event) => { state.search = event.target.value; render(); });
 document.querySelectorAll('.filter').forEach((button) => button.addEventListener('click', () => { document.querySelector('.filter.active').classList.remove('active'); button.classList.add('active'); state.filter = button.dataset.filter; render(); }));
 $('#new-equipment').addEventListener('click', () => openForm());
-$('#equipment-list').addEventListener('click', async (event) => { const editId = event.target.dataset.edit; const deleteId = event.target.dataset.delete; if (editId) openForm(state.equipment.find((item) => String(item.id) === editId)); if (deleteId && confirm('Excluir este equipamento?')) { const response = await fetch(`/equipamentos/${deleteId}`, { method: 'DELETE' }); if (response.ok) { showToast('Equipamento removido.'); await loadEquipment(); } else showToast('Nao foi possivel excluir o equipamento.', true); } });
-$('#equipment-form').addEventListener('submit', async (event) => { event.preventDefault(); const id = $('#equipment-id').value; const payload = { nome: $('#name').value.trim(), tipo: $('#type').value, quantidade: Number($('#quantity').value), valor: Number($('#value').value) }; const response = await fetch(id ? `/equipamentos/${id}` : '/equipamentos', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { $('#form-error').textContent = 'Nao foi possivel salvar. Verifique a conexao com o banco.'; return; } $('#equipment-dialog').close(); showToast(id ? 'Equipamento atualizado.' : 'Equipamento cadastrado.'); await loadEquipment(); });
+$('#close-dialog').addEventListener('click', () => $('#equipment-dialog').close());
+$('#equipment-list').addEventListener('click', async (event) => { const editId = event.target.dataset.edit; const deleteId = event.target.dataset.delete; if (editId) openForm(state.equipment.find((item) => String(item.id) === editId)); if (deleteId && confirm('Excluir este equipamento?')) { const response = await fetch(`${API_URL}/equipamentos/${deleteId}`, { method: 'DELETE' }); if (response.ok) { showToast('Equipamento removido.'); await loadEquipment(); } else showToast('Nao foi possivel excluir o equipamento.', true); } });
+$('#equipment-form').addEventListener('submit', async (event) => { event.preventDefault(); const id = $('#equipment-id').value; const payload = { nome: $('#name').value.trim(), tipo: $('#type').value, quantidade: Number($('#quantity').value), valor: Number($('#value').value) }; const response = await fetch(id ? `${API_URL}/equipamentos/${id}` : `${API_URL}/equipamentos`, { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { $('#form-error').textContent = 'Nao foi possivel salvar. Verifique a conexao com o banco.'; return; } $('#equipment-dialog').close(); showToast(id ? 'Equipamento atualizado.' : 'Equipamento cadastrado.'); await loadEquipment(); });
 loadEquipment();
