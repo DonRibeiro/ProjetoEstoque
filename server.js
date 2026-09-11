@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // LISTAR TODOS OS EQUIPAMENTOS (GET)
 app.get('/equipamentos', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM equipamentos');
+    const [rows] = await pool.query('SELECT * FROM equipamentos ORDER BY nome ASC');
     res.json(rows);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar equipamentos: ' + error.message });
