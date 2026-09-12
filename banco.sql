@@ -71,14 +71,14 @@ CALL equipamentos_acima_de_1000(); /* Chamando a procedure */
 
 ALTER TABLE EQUIPAMENTOS ADD COLUMN valor_total DECIMAL(10,2) AS (valor * quantidade);
 
-/* Criando uma forma de vizualizar a tabela com o valor em reais */
+/* Criando uma forma de visualizar a tabela com o valor em reais */
 
 CREATE VIEW vw_valoresReal AS 
 SELECT id, nome, quantidade, 
 CONCAT('R$ ', FORMAT(valor, 2, 'pt_BR')) AS valor, CONCAT('R$ ', FORMAT(valor_total, 2, 'pt_BR')) AS valor_total 
 FROM equipamentos;
 
-SELECT * FROM vw_valoresReal; /* Para vizualizar a tabela com o valor em reais */
+SELECT * FROM vw_valoresReal; /* Para visualizar  m  a tabela com o valor em reais */
 
 /* UPDATE */ 
 UPDATE equipamentos SET quantidade = 2 WHERE id = 19;
